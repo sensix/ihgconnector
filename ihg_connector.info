@@ -1,0 +1,7 @@
+name = "IHG Connector"
+description = "Modulo di connessione con le app"
+core = "7.x"
+package = "IHG"
+files[] = ihg_connector.module
+files[] = ihg_connector.inc
+files[] = ihg_connector.inc

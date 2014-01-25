@@ -1,0 +1,12 @@
+<?php
+
+function ihg_connector_menu(){
+	$items = array();
+	$items['ihg/connector'] = array(
+		'page callback' => 'ihg_connector_connector',
+		'access callback' => TRUE,
+		'file' => 'ihg_connector.inc'
+	);
+	return $items;
+}
+
