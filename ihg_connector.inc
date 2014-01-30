@@ -1,18 +1,22 @@
 <?php 
 
 function ihg_connector_sync(){
+	$out = new stdClass();
 	if(!isset($_GET['v'])){
-		$out = array('error', "specificare versione");
+		$out->status = -1;
+		$out->message = "specificare versione";
 	}else{
 		$v = $_GET['v'];
 		$c_v = variable_get('data_last_version', 0);
 		if($v < $c_v){
 			$out = new stdClass();
+			$out->status = 1;
 			$out->version = variable_get('data_last_version', 0);
 			$out->data = ihg_connector_data_json();
 			$out->images = ihg_connector_images_json();
 		}else{
-			$out = array('notthing to update');
+			$out->status = 0;
+			$out->message = "nothing to update";
 		}
 	}
 	drupal_json_output($out);
