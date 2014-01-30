@@ -1,6 +1,29 @@
 <?php 
 
-function ihg_connector_connector(){
+function ihg_connector_sync(){
+	if(!isset($_GET['v'])){
+		$out = array('error', "specificare versione");
+	}else{
+		$v = $_GET['v'];
+		$c_v = variable_get('data_last_version', 0);
+		if($v < $c_v){
+			$out = new stdClass();
+			$out->version = variable_get('data_last_version', 0);
+			$out->data = ihg_connector_data_json();
+			$out->images = ihg_connector_images_json();
+		}else{
+			$out = array('notthing to update');
+		}
+	}
+	drupal_json_output($out);
+}
+
+function ihg_connector_images_json(){
+	$result = db_query("select uri, timestamp from file_managed")->fetchAll();
+	return $result;
+}
+
+function ihg_connector_data_json(){
 	$hotels = array();
 	
 	$result = db_query("select node.nid,node.language,node.title, 
@@ -19,6 +42,8 @@ function ihg_connector_connector(){
 	foreach($result as $record){
 		$hotel = new stdClass();
 		$hotel->nid = $record->nid;
+		$hotel->lingua = $record->language;
+		$hotel->ordinamento = $record->ordinamento;
 		$hotel->tipo = _fetch_term($record->nid, 'field_tipologia');
 		$hotel->nome = $record->title;
 		$hotel->indirizzo = $record->indirizzo;
@@ -57,7 +82,7 @@ function ihg_connector_connector(){
 		
 		$hotels[] = $hotel;
 	}
-	drupal_json_output($hotels);
+	return $hotels;
 }
 
 function _fetch_term($nid, $field){

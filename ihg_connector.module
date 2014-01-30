@@ -2,11 +2,35 @@
 
 function ihg_connector_menu(){
 	$items = array();
-	$items['ihg/connector'] = array(
-		'page callback' => 'ihg_connector_connector',
+	$items['ihg/connector/sync'] = array(
+			'page callback' => 'ihg_connector_sync',
+			'access callback' => TRUE,
+			'file' => 'ihg_connector.inc'
+	);
+	
+	$items['ihg/connector/data.json'] = array(
+		'page callback' => 'ihg_connector_data_json',
 		'access callback' => TRUE,
 		'file' => 'ihg_connector.inc'
 	);
+	$items['ihg/connector/images.json'] = array(
+			'page callback' => 'ihg_connector_images_json',
+			'access callback' => TRUE,
+			'file' => 'ihg_connector.inc'
+	);
+	$items['ihg/data_version'] = array(
+			'page callback' => 'ihg_connector_data_version',
+			'access callback' => TRUE,
+	);
 	return $items;
+}
+
+function ihg_connector_node_update($node){
+	$data_last_version = variable_get('data_last_version', 0);
+	variable_set('data_last_version', ++$data_last_version);
+}
+
+function ihg_connector_data_version(){
+	print variable_get('data_last_version', 0);
 }
 
