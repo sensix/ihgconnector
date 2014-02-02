@@ -1,6 +1,7 @@
 <?php 
 
 function ihg_connector_sync(){
+	
 	$out = new stdClass();
 	if(!isset($_GET['v'])){
 		$out->status = -1;
@@ -13,7 +14,7 @@ function ihg_connector_sync(){
 			$out->status = 1;
 			$out->version = variable_get('data_last_version', 0);
 			$out->data = ihg_connector_data_json();
-			$out->images = ihg_connector_images_json();
+			$out->cities = ihg_connector_cities_json();
 		}else{
 			$out->status = 0;
 			$out->message = "nothing to update";
@@ -163,4 +164,20 @@ join field_data_field_emailc on field_data_field_emailc.entity_id=field_data_fie
 left join field_data_field_fototessera_c on field_data_field_fototessera_c.entity_id=field_data_field_mansionec.entity_id
 left join file_managed on file_managed.fid=field_data_field_fototessera_c.field_fototessera_c_fid
 where field_data_field_mansionec.entity_id=:nid", array(':nid' => $nid))->fetch();
+}
+
+function ihg_connector_cities_json(){
+	$images = array();
+	$banners = db_query("select term.name,f.uri from field_data_field_immagine_citt_ ic
+join taxonomy_term_data term on term.tid=ic.entity_id
+join file_managed f on f.fid=ic.field_immagine_citt__fid
+where ic.bundle=:bundle", array(':bundle' => "localit_sulla_mappa"))->fetchAllAssoc('name');
+	$maps = db_query("select term.name,f.uri from field_data_field_mappa_citt_ mappa
+join taxonomy_term_data term on term.tid=mappa.entity_id
+join file_managed f on f.fid=mappa.field_mappa_citt__fid
+where mappa.bundle=:bundle", array(':bundle' => "localit_sulla_mappa"))->fetchAllAssoc('name');
+	foreach($banners as $key => $value){
+		$images[] = (object)array('name' => $key, 'banner' => $value->uri, 'mappa' => $maps[$key]->uri);
+	}
+	return $images;
 }
