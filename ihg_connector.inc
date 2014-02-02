@@ -53,6 +53,8 @@ function ihg_connector_data_json(){
 		$hotel->indirizzo = $record->indirizzo;
 		$hotel->luogo = _fetch_term($record->nid, 'field_localit_');
 		$hotel->mappa = _fetch_uri($record->nid, 'field_mappa_struttura');
+		$hotel->banner_citta = _fetch_uri($record->nid, 'field_immagine_citt_');
+		$hotel->mappa_citta = _fetch_uri($record->nid, 'field_mappa_citt_');
 		
 		$welcome = new stdClass();
 		$welcome->desc = $record->descrizione_welcome;
