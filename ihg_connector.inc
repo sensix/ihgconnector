@@ -15,6 +15,7 @@ function ihg_connector_sync(){
 			$out->version = variable_get('data_last_version', 0);
 			$out->data = ihg_connector_data_json();
 			$out->cities = ihg_connector_cities_json();
+			$out->totals = ihg_connector_totals_json();
 		}else{
 			$out->status = 0;
 			$out->message = "nothing to update";
@@ -52,6 +53,8 @@ function ihg_connector_data_json(){
 		$hotel->tipo = _fetch_term($record->nid, 'field_tipologia');
 		$hotel->nome = $record->title;
 		$hotel->indirizzo = $record->indirizzo;
+		$hotel->telefono = $record->telefono;
+		$hotel->fax = $record->fax;
 		$hotel->luogo = _fetch_term($record->nid, 'field_localit_');
 		$hotel->mappa = _fetch_uri($record->nid, 'field_mappa_struttura');
 		$hotel->banner_citta = _fetch_uri($record->nid, 'field_immagine_citt_');
@@ -90,6 +93,18 @@ function ihg_connector_data_json(){
 		$hotels[] = $hotel;
 	}
 	return $hotels;
+}
+
+function ihg_connector_totals_json(){
+	$ret = db_query("select d.name,count(t.entity_id) as num from field_data_field_tipologia t
+join taxonomy_term_data d on d.tid=t.field_tipologia_tid
+join node on node.nid=t.entity_id
+where t.bundle='hotel' and node.language='it'
+group by d.name")->fetchAll();
+	foreach($ret as &$record){
+		$record->name = str_replace(" ", "-", $record->name);
+	}
+	return $ret;
 }
 
 function _fetch_term($nid, $field){
