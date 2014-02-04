@@ -56,13 +56,12 @@ function ihg_connector_data_json(){
 		$hotel->mappa = _fetch_uri($record->nid, 'field_mappa_struttura');
 		$hotel->banner_citta = _fetch_uri($record->nid, 'field_immagine_citt_');
 		$hotel->mappa_citta = _fetch_uri($record->nid, 'field_mappa_citt_');
-		
+		//welcome
 		$welcome = new stdClass();
 		$welcome->desc = $record->descrizione_welcome;
 		$welcome->caratt = _fetch_multiple_value($record->nid, 'field_caratteristica_1_welcome', 'caratteristica');
 		$welcome->foto = _fetch_multiple_uri($record->nid, 'field_foto_welcome', 'foto');
-		
-		
+		//camere
 		$camere = new stdClass();
 		$camere->caratt = _fetch_multiple_value($record->nid, 'field_caratteristica_1_camere', 'caratteristica');
 		$camere->foto = _fetch_multiple_uri($record->nid, 'field_foto_camere', 'foto');
@@ -81,6 +80,7 @@ function ihg_connector_data_json(){
 		$contatti[] = array('contatto' =>_fetch_contatto_c($record->nid));
 		
 		$hotel->welcome = $welcome;
+		$hotel->camere = $camere;
 		$hotel->meetings = $meetings;
 		$hotel->servizi = $servizi;
 		$hotel->contatti = $contatti;
@@ -107,7 +107,7 @@ function _fetch_uri($nid, $field){
 	$file = db_query("select uri from file_managed
 join $table t on t.$column=file_managed.fid
 where t.entity_id=:nid", array(':nid' => $nid))->fetch();
-	return $file->uri;
+	return isset($file->uri)?$file->uri:'';
 }
 
 function _fetch_multiple_value($nid, $field, $alias){
