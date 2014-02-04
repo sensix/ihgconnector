@@ -44,7 +44,8 @@ function ihg_connector_data_json(){
 			left join field_data_field_telefono telefono on telefono.entity_id=node.nid
 			left join field_data_field_fax fax on fax.entity_id=node.nid
 			left join field_data_field_descrizione_welcome descrizione_welcome on descrizione_welcome.entity_id=node.nid
-			where type in ('hotel')");
+			where type in ('hotel')
+			order by ordinamento asc");
 	foreach($result as $record){
 		$hotel = new stdClass();
 		$hotel->nid = $record->nid;
