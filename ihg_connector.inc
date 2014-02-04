@@ -85,7 +85,7 @@ function ihg_connector_data_json(){
 		$hotel->servizi = $servizi;
 		$hotel->contatti = $contatti;
 		
-		$hotel->panormaiche = _fetch_multiple_uri($record->nid, 'field_foto_360', 'foto');
+		$hotel->panoramiche = _fetch_panoramiche($record->nid);
 		
 		$hotels[] = $hotel;
 	}
@@ -123,6 +123,19 @@ function _fetch_multiple_uri($nid, $field){
 	$files = db_query("select uri from file_managed
 			join $table t on t.$column=file_managed.fid
 			where t.entity_id=:nid", array(':nid' => $nid))->fetchAll();
+	return $files;
+}
+
+function _fetch_panoramiche($nid){
+	$files = db_query("select 
+case field_foto_360_title
+	when '' then 'Virtual Tour'
+	else field_foto_360_title
+end as 'title',
+f.uri 
+from field_data_field_foto_360 p
+join file_managed f on f.fid=p.field_foto_360_fid
+where p.entity_id=:nid", array(':nid' => $nid))->fetchAll();
 	return $files;
 }
 
