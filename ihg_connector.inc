@@ -161,12 +161,13 @@ function _fetch_contatto_a($nid){
 	field_data_field_nome_e_cognome.field_nome_e_cognome_value as nome,
 	field_data_field_email.field_email_value as email,
 	file_managed.uri as 'foto'
-from field_data_field_mansione
-join field_data_field_nome_e_cognome on field_data_field_nome_e_cognome.entity_id=field_data_field_mansione.entity_id
-join field_data_field_email on field_data_field_email.entity_id=field_data_field_mansione.entity_id
-left join field_data_field_fototessera_a on field_data_field_fototessera_a.entity_id=field_data_field_mansione.entity_id
+from node
+left join field_data_field_mansione on field_data_field_mansione.entity_id=node.nid
+left join field_data_field_nome_e_cognome on field_data_field_nome_e_cognome.entity_id=node.nid
+left join field_data_field_email on field_data_field_email.entity_id=node.nid
+left join field_data_field_fototessera_a on field_data_field_fototessera_a.entity_id=node.nid
 left join file_managed on file_managed.fid=field_data_field_fototessera_a.field_fototessera_a_fid
-where field_data_field_mansione.entity_id=:nid", array(':nid' => $nid))->fetch();
+where node.nid=:nid", array(':nid' => $nid))->fetch();
 }
 function _fetch_contatto_b($nid){
 	return db_query("select
@@ -174,12 +175,13 @@ function _fetch_contatto_b($nid){
 	field_data_field_nome_e_cognomeb.field_nome_e_cognomeb_value as nome,
 	field_data_field_emailb.field_emailb_value as email,
 	file_managed.uri as 'foto'
-from field_data_field_mansioneb
-join field_data_field_nome_e_cognomeb on field_data_field_nome_e_cognomeb.entity_id=field_data_field_mansioneb.entity_id
-join field_data_field_emailb on field_data_field_emailb.entity_id=field_data_field_mansioneb.entity_id
-left join field_data_field_fototessera_b on field_data_field_fototessera_b.entity_id=field_data_field_mansioneb.entity_id
+from node 
+left join field_data_field_mansioneb on field_data_field_mansioneb.entity_id=node.nid
+left join field_data_field_nome_e_cognomeb on field_data_field_nome_e_cognomeb.entity_id=node.nid
+left join field_data_field_emailb on field_data_field_emailb.entity_id=node.nid
+left join field_data_field_fototessera_b on field_data_field_fototessera_b.entity_id=node.nid
 left join file_managed on file_managed.fid=field_data_field_fototessera_b.field_fototessera_b_fid
-where field_data_field_mansioneb.entity_id=:nid", array(':nid' => $nid))->fetch();
+where node.nid=:nid", array(':nid' => $nid))->fetch();
 }
 function _fetch_contatto_c($nid){
 	return db_query("select
@@ -187,12 +189,13 @@ function _fetch_contatto_c($nid){
 	field_data_field_nome_e_cognomec.field_nome_e_cognomec_value as nome,
 	field_data_field_emailc.field_emailc_value as email,
 	file_managed.uri as 'foto'
-from field_data_field_mansionec
-join field_data_field_nome_e_cognomec on field_data_field_nome_e_cognomec.entity_id=field_data_field_mansionec.entity_id
-join field_data_field_emailc on field_data_field_emailc.entity_id=field_data_field_mansionec.entity_id
-left join field_data_field_fototessera_c on field_data_field_fototessera_c.entity_id=field_data_field_mansionec.entity_id
+from node 
+left join field_data_field_mansionec on field_data_field_mansionec.entity_id=node.nid
+left join field_data_field_nome_e_cognomec on field_data_field_nome_e_cognomec.entity_id=node.nid
+left join field_data_field_emailc on field_data_field_emailc.entity_id=node.nid
+left join field_data_field_fototessera_c on field_data_field_fototessera_c.entity_id=node.nid
 left join file_managed on file_managed.fid=field_data_field_fototessera_c.field_fototessera_c_fid
-where field_data_field_mansionec.entity_id=:nid", array(':nid' => $nid))->fetch();
+where node.nid=:nid", array(':nid' => $nid))->fetch();
 }
 
 function ihg_connector_cities_json(){
