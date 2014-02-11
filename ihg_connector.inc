@@ -29,7 +29,7 @@ function ihg_connector_images_json(){
 	$map = array(
 		'public://foto-localita' => 'styles/ihg_banner/public/foto-localita',
 		'public://foto-360' => 'styles/ihg_360/public/foto-360',
-		'public://foto-camere' => 'styles/ihg_foto/public/oto-camere',
+		'public://foto-camere' => 'styles/ihg_foto/public/foto-camere',
 		'public://foto-meetings-eventi' => 'styles/ihg_foto/public/foto-meetings-eventi',
 		'public://foto-servizi' => 'styles/ihg_foto/public/foto-servizi',
 		'public://foto-welcome' => 'styles/ihg_foto/public/foto-welcome',
