@@ -30,7 +30,7 @@ function ihg_connector_images_json(){
 		'public://foto-localita' => 'styles/ihg_banner/public/foto-localita',
 		'public://foto-360' => 'styles/ihg_360/public/foto-360',
 		'public://foto-camere' => 'styles/ihg_foto/public/oto-camere',
-		'public://foto-meetings-eventi' => 'istyles/hg_foto/public/foto-meetings-eventi',
+		'public://foto-meetings-eventi' => 'styles/ihg_foto/public/foto-meetings-eventi',
 		'public://foto-servizi' => 'styles/ihg_foto/public/foto-servizi',
 		'public://foto-welcome' => 'styles/ihg_foto/public/foto-welcome',
 		'public://mappe-citta' => 'styles/ihg_foto/public/mappe-citta',
