@@ -16,6 +16,7 @@ function ihg_connector_sync(){
 			$out->data = ihg_connector_data_json();
 			$out->cities = ihg_connector_cities_json();
 			$out->totals = ihg_connector_totals_json();
+			$out->images = ihg_connector_images_json();
 		}else{
 			$out->status = 0;
 			$out->message = "nothing to update";
@@ -25,7 +26,23 @@ function ihg_connector_sync(){
 }
 
 function ihg_connector_images_json(){
+	$map = array(
+		'public://foto-localita' => 'styles/ihg_banner/public/foto-localita',
+		'public://foto-360' => 'styles/ihg_360/public/foto-360',
+		'public://foto-camere' => 'styles/ihg_foto/public/oto-camere',
+		'public://foto-meetings-eventi' => 'istyles/hg_foto/public/foto-meetings-eventi',
+		'public://foto-servizi' => 'styles/ihg_foto/public/foto-servizi',
+		'public://foto-welcome' => 'styles/ihg_foto/public/foto-welcome',
+		'public://mappe-citta' => 'styles/ihg_foto/public/mappe-citta',
+		'public://mappe-struttura' => 'styles/ihg_foto/public/mappe-struttura',
+		'public://fototessera-contatti' => 'styles/ihg_foto-tessera/public/fototessera-contatti'
+	);
 	$result = db_query("select uri, timestamp from file_managed")->fetchAll();
+	foreach($result as &$row){
+		foreach($map as $search => $replace){
+			$row->uri = str_replace($search, $replace, $row->uri);
+		}
+	}
 	return $result;
 }
 
