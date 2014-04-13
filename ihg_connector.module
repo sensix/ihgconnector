@@ -7,7 +7,11 @@ function ihg_connector_menu(){
 			'access callback' => TRUE,
 			'file' => 'ihg_connector.inc'
 	);
-	
+	$items['ihg/connector/last_data.json'] = array(
+		'page callback' => 'ihg_connector_last_data_json',
+		'access callback' => TRUE,
+		'file' => 'ihg_connector.inc'		
+	);
 	$items['ihg/connector/data.json'] = array(
 		'page callback' => 'ihg_connector_data_json',
 		'access callback' => TRUE,
