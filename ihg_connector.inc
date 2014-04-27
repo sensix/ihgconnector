@@ -26,13 +26,17 @@ function ihg_connector_sync(){
 }
 
 function ihg_connector_last_data_json(){
+	drupal_json_output(_ihg_connector_last_data_json());
+}
+
+function _ihg_connector_last_data_json(){
 	$out = new stdClass();
 	$out->status = 1;
 	$out->version = variable_get('data_last_version', 0);
 	$out->data = ihg_connector_data_json();
 	$out->cities = ihg_connector_cities_json();
 	$out->totals = ihg_connector_totals_json();
-	drupal_json_output($out);
+	return $out;
 }
 
 function ihg_connector_images_json(){

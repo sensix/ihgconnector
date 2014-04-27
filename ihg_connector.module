@@ -26,8 +26,94 @@ function ihg_connector_menu(){
 			'page callback' => 'ihg_connector_data_version',
 			'access callback' => TRUE,
 	);
+	
 	return $items;
 }
+
+function ihg_connector_cronapi($op, $job = NULL) {
+
+	if ($op == 'list') {
+		$items['ihg_connector_generate_data'] = array(
+				'description' => 'Genera i dati json per la presentazione',
+				'rule' => '/15 * * * *', // ogni 15 minuti
+		);
+		$items['ihg_connector_generate_zip_data'] = array(
+				'description' => 'Genera lo zip della presentazione da scaricare',
+				'rule' => '0 3 * * *', // tutte le notti
+		);
+		return $items;
+	}
+	elseif ($op == 'execute') {
+		switch ($job) {
+			case 'ihg_connector_generate_data':
+				_ihg_connector_generate_data();
+				break;
+			case 'ihg_connector_generate_zip_data':
+				_ihg_connector_generate_zip_data();
+				break;
+		}
+	}
+
+}
+
+function _ihg_connector_generate_data(){
+	include_once drupal_get_path('module', 'ihg_connector') . '/ihg_connector.inc';
+	$wrapper = file_stream_wrapper_get_instance_by_uri('public://');
+	$file_realpath = $wrapper->realpath();
+	$styles_realpath = $file_realpath . "/styles";
+	$base_path = $file_realpath . "/preview";
+	
+	$data_dir = $base_path . "/data";
+
+	
+	// rimuove la cartella data
+	$ret = exec('rm -rf ' . $data_dir, $output, $return_var);
+	
+	if( FALSE === $ret ){
+		watchdog('cron', 'Non è stato possibile rimuovere la directory @dir',array('@dir' => $data_dir), WATCHDOG_ERROR);
+		return false;
+	}
+	if( FALSE === mkdir($data_dir) ){
+		watchdog('cron', 'Non è stato possibile creare la directory @dir',array('@dir' => $data_dir), WATCHDOG_ERROR);
+		return false;
+	}
+	// genera il file json
+	$json_data = drupal_json_encode(_ihg_connector_last_data_json());
+	$json_data = 'var ihg_data = ' . $json_data;
+	if( FALSE === file_unmanaged_save_data($json_data, 'public://preview/data/data.json', FILE_EXISTS_REPLACE)){
+		watchdog('cron', 'Non è stato possibile generare il file data.json',null, WATCHDOG_ERROR);
+		return false;		
+	}
+	// copia tutte le immagini
+	$copy_cmd = 'cp -r ' . $styles_realpath . ' ' . $data_dir . '/';
+	if( FALSE === system($copy_cmd) ){
+		watchdog('cron', 'Non è stato possibile copiare le immagini in styles',null, WATCHDOG_ERROR);
+		return false;
+	}
+	watchdog('cron', 'La presentazione è stata correttamente aggiornata',null, WATCHDOG_INFO);
+	return true;
+	
+}
+
+function _ihg_connector_generate_zip_data(){
+	include_once drupal_get_path('module', 'ihg_connector') . '/ihg_connector.inc';
+	$json_data = drupal_json_encode(_ihg_connector_last_data_json());
+	$json_data = 'var ihg_data = ' . $json_data;
+	file_unmanaged_save_data($json_data, 'public://data/data.json', FILE_EXISTS_REPLACE);
+	$wrapper = file_stream_wrapper_get_instance_by_uri('public://');
+	$realpath = $wrapper->realpath();
+	$filename = $realpath . 'zip/welcometoitaly.zip'; 
+	$zip = new ZipArchive();
+	if ($zip->open($filename, ZipArchive::OVERWRITE)!==TRUE) {
+		watchdog('cron', "cannot open $filename");
+		drupal_set_message("cannot open $filename", "error");
+		return false;
+	}
+	$zip->addFile($realpath . '/data/data.json');
+	addFolderToZip($realpath . '/ihgpresentation/', $zip);
+	$zip->close();
+}
+
 
 function ihg_connector_node_update($node){
 	$data_last_version = variable_get('data_last_version', 0);
@@ -36,5 +122,48 @@ function ihg_connector_node_update($node){
 
 function ihg_connector_data_version(){
 	print variable_get('data_last_version', 0);
+}
+
+function addFolderToZip($dir, &$zipArchive, $zipdir = ''){
+	if (is_dir($dir)) {
+		if ($dh = opendir($dir)) {
+
+			//Add the directory
+			if(!empty($zipdir)) $zipArchive->addEmptyDir($zipdir);
+			 
+			// Loop through all the files
+			while (($file = readdir($dh)) !== false) {
+				 
+				//If it's a folder, run the function again!
+				if(!is_file($dir . $file)){
+					// Skip parent and root directories
+					if( ($file !== ".") && ($file !== "..")){
+						addFolderToZip($dir . $file . "/", $zipArchive, $zipdir . $file . "/");
+					}
+					 
+				}else{
+					// Add the files
+					$zipArchive->addFile($dir . $file, $zipdir . $file);
+					 
+				}
+			}
+		}
+	}
+}
+
+function recurse_copy($src,$dst) {
+	$dir = opendir($src);
+	@mkdir($dst);
+	while(false !== ( $file = readdir($dir)) ) {
+		if (( $file != '.' ) && ( $file != '..' )) {
+			if ( is_dir($src . '/' . $file) ) {
+				recurse_copy($src . '/' . $file,$dst . '/' . $file);
+			}
+			else {
+				copy($src . '/' . $file,$dst . '/' . $file);
+			}
+		}
+	}
+	closedir($dir);
 }
 
