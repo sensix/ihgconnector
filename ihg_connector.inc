@@ -49,7 +49,7 @@ function ihg_connector_images_json(){
 		'public://foto-welcome' => 'styles/ihg_foto/public/foto-welcome',
 		'public://mappe-citta' => 'styles/ihg_foto/public/mappe-citta',
 		'public://mappe-struttura' => 'styles/ihg_foto/public/mappe-struttura',
-		'public://fototessera-contatti' => 'styles/ihg_foto-tessera/public/fototessera-contatti'
+		'public://fototessere-contatti' => 'styles/ihg_foto-tessera/public/fototessera-contatti'
 	);
 	$result = db_query("select uri, timestamp from file_managed")->fetchAll();
 	foreach($result as &$row){
