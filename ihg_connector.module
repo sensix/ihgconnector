@@ -51,25 +51,9 @@ function ihg_connector_cronapi($op, $job = NULL) {
 
 function _ihg_connector_generate_data(){
 	include_once drupal_get_path('module', 'ihg_connector') . '/ihg_connector.inc';
-	$wrapper = file_stream_wrapper_get_instance_by_uri('public://');
-	$file_realpath = $wrapper->realpath();
-	$styles_realpath = $file_realpath . "/styles";
-	$base_path = $file_realpath . "/preview";
 	
 	$data_dir = $base_path . "/data";
 
-	
-	// rimuove la cartella data
-	$ret = exec('rm -rf ' . $data_dir, $output, $return_var);
-	
-	if( FALSE === $ret ){
-		watchdog('cron', 'Non è stato possibile rimuovere la directory @dir',array('@dir' => $data_dir), WATCHDOG_ERROR);
-		return false;
-	}
-	if( FALSE === mkdir($data_dir) ){
-		watchdog('cron', 'Non è stato possibile creare la directory @dir',array('@dir' => $data_dir), WATCHDOG_ERROR);
-		return false;
-	}
 	// genera il file json
 	$json_data = drupal_json_encode(_ihg_connector_last_data_json());
 	$json_data = 'var ihg_data = ' . $json_data;
@@ -77,13 +61,8 @@ function _ihg_connector_generate_data(){
 		watchdog('cron', 'Non è stato possibile generare il file data.json',null, WATCHDOG_ERROR);
 		return false;		
 	}
-	// copia tutte le immagini
-	$copy_cmd = 'cp -r ' . $styles_realpath . ' ' . $data_dir . '/';
-	if( FALSE === system($copy_cmd) ){
-		watchdog('cron', 'Non è stato possibile copiare le immagini in styles',null, WATCHDOG_ERROR);
-		return false;
-	}
-	watchdog('cron', 'La presentazione è stata correttamente aggiornata',null, WATCHDOG_INFO);
+
+	watchdog('cron', 'il file data.json è stato generato',null, WATCHDOG_INFO);
 	return true;
 	
 }
